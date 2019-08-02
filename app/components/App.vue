@@ -8,8 +8,8 @@
         <Label class="drawer-item" text="Software" />
         <Label class="drawer-item" text="Hardware" />
         <Label text="Support" padding="10" backgroundColor="lightgray" />
-        <Label class="drawer-item" text="Hardware" />
-        <Label class="drawer-item" text="Software" @tap="goTo('test')" />
+        <Label class="drawer-item" text="Hardware" @tap="goTo('counter')" />
+        <Label class="drawer-item" text="Profile" @tap="goTo('profile')" />
         <Label text="Misc" padding="10" backgroundColor="lightgray" />
         <Label class="drawer-item" text="Customer List" @tap="goTo('customer')" />
         <Label class="drawer-item" text="Call Logs" @tap="goTo('plugin')" />
@@ -37,11 +37,11 @@
 </template>
 
 <script >
-
 import CustomerList from "./CustomerList";
 import Plugin from "./Plugin";
 import About from "./About";
-import Test from "./Test";
+import ProfileDisplay from "./profile/ProfileDisplay";
+import Counter from "./Counter";
 
 export default {
   data() {
@@ -58,8 +58,11 @@ export default {
         case "plugin":
           this.$navigateTo(Plugin);
           break;
-        case "test":
-          this.$navigateTo(Test);
+        case "profile":
+          this.$navigateTo(ProfileDisplay);
+          break;
+        case "counter":
+          this.$navigateTo(Counter);
           break;
         default:
           this.$navigateTo(About);

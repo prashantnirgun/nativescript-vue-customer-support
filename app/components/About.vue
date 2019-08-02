@@ -59,7 +59,7 @@ export default {
         )
         .then(() => {
           console.log("Woo Hoo, I have the power!");
-          phone.dial("9223588459", false).then(
+          phone.dial("9324360777", false).then(
             args => {
               console.log("call response", args);
             },

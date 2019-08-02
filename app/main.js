@@ -5,6 +5,9 @@ import RadListView from "nativescript-ui-listview/vue";
 import RadDataForm from "nativescript-ui-dataform/vue";
 import { TNSFontIcon, fonticon } from "nativescript-fonticon";
 import VueDevtools from "nativescript-vue-devtools";
+import { Couchbase } from "nativescript-couchbase-plugin";
+
+const database = new Couchbase("my-database");
 
 Vue.use(RadDataForm);
 

@@ -1,15 +1,22 @@
 <template>
-  <GridLayout rows="*,80">
-    <!-- <ActivityIndicator row="0" :busy="isLoading" /> -->
-    <RadDataForm
+  <GridLayout rows="auto,*,80">
+    <ActivityIndicator
       row="0"
+      width="100"
+      height="100"
+      borderRadius="50"
+      :busy="isLoading"
+      :visibility="isLoading? 'visible' : 'collapsed'"
+    />
+    <RadDataForm
+      row="1"
       ref="dataform"
       :source="companyForm"
       :metadata="companyFormMetadata"
       @propertyCommitted="onPropertyCommitted"
       @groupUpdate="onGroupUpdate"
     />
-    <StackLayout row="1" orientation="horizontal">
+    <StackLayout row="2" orientation="horizontal">
       <Button class="btn btn-primary" text="Submit" @tap="onValidateTap"></Button>
       <Button class="btn" backgroundColor="orange" color="white" text="Cancel"></Button>
     </StackLayout>
