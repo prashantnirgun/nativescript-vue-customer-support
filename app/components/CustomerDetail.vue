@@ -2,7 +2,7 @@
   <Page>
     <ActionBar title="Customer Detail" class="action-bar" />
 
-    <TabView ref="tab">
+    <TabView :selectedIndex="selectedIndex" @selectedIndexChange="selectedIndex = $event.value">
       <TabViewItem title="Customer">
         <CustomerEdit :customer_id="customer_id" />
       </TabViewItem>
@@ -17,7 +17,6 @@
 </template>
 
 <script>
-//import axios from "axios/dist/axios";
 import CustomerEdit from "./CustomerEdit";
 import CompanyEdit from "./CompanyEdit";
 import CompanyList from "./CompanyList";
@@ -30,7 +29,8 @@ export default {
   },
   data() {
     return {
-      companyData: {}
+      companyData: {},
+      selectedIndex: 0
     };
   },
   props: {
@@ -42,25 +42,22 @@ export default {
     }
   },
   methods: {
-    onItemTap(event) {
-      //console.log(event.index);
-      //console.log(event.item.co_id);
-      //this.co_id = event.item.co_id;
-    },
+    ///onItemTap(event) {
+    //console.log(event.index);
+    //console.log(event.item.co_id);
+    //this.co_id = event.item.co_id;
+    //},
     onClickChild(obj) {
       this.companyData = {
         id: obj.id,
         customer_id: this.customer_id,
         action: obj.action
       };
-
+      this.selectedIndex = 2;
       console.log("received from child", obj);
     },
     onChildSubmit() {
-      //this.$refs.tab.selectedIndex = 1;
-      //this.$refs.tab.set("selectedIndex", 1);
-      //console.log("going to change tab", this.$refs.tab);
-      //this.$refs.tab.tabSelectedIndex = 1;
+      this.selectedIndex = 1;
     }
   }
 };

@@ -18,7 +18,6 @@
     />
     <StackLayout row="2" orientation="horizontal">
       <Button class="btn btn-primary" text="Submit" @tap="onValidateTap"></Button>
-      <Button class="btn" backgroundColor="orange" color="white" text="Cancel"></Button>
     </StackLayout>
   </GridLayout>
 </template>
