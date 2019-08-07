@@ -16,7 +16,7 @@
       @groupUpdate="onGroupUpdate"
     />
     <StackLayout row="2" orientation="horizontal">
-      <Button class="btn btn-primary" text="Submit" color="black" @tab="submit"></Button>
+      <Button class="btn btn-primary" color="black" text="Submit" @tap="save"></Button>
       <Button class="btn" backgroundColor="orange" color="black" text="Call" @tap="call"></Button>
       <Button class="btn" backgroundColor="yellow" color="black" text="SMS" @tap="sms"></Button>
     </StackLayout>
@@ -27,6 +27,11 @@
 import axios from "axios/dist/axios";
 import * as permissions from "nativescript-permissions";
 import * as phone from "nativescript-phone";
+import { getByKeys, getByValues } from "../helper";
+import { constants } from "fs";
+const yesnoList = { Y: "Yes", N: "No" };
+const marketList = { V: "Veg", F: "Fruit", O: "Onion", R: "Retail" };
+import format from "date-fns/format";
 
 export default {
   props: {
@@ -51,7 +56,7 @@ export default {
         contact_no2: "",
         email: "",
         no_of_company: 0,
-        sms: "N",
+        sms: "No",
         backup: "N",
         mobile: "N",
         market: "Veg",
@@ -73,12 +78,21 @@ export default {
             name: "id",
             displayName: "ID",
             index: 0,
+            editor: "Number",
             hidden: true
           },
           {
             name: "general_ledger_id",
             displayName: "General Ledger",
             index: 0,
+            editor: "Number",
+            hidden: true
+          },
+          {
+            name: "mobile",
+            displayName: "Mobile",
+            index: 0,
+            editor: "Text",
             hidden: true
           },
           {
@@ -135,21 +149,23 @@ export default {
             displayName: "Total Companies",
             index: 7,
             groupName: "Account",
-            editor: "Text"
+            editor: "Number"
           },
           {
             name: "sms",
             displayName: "SMS",
             index: 8,
             groupName: "Account",
-            editor: "Switch"
+            editor: "Picker",
+            valuesProvider: ["Yes", "No"]
           },
           {
             name: "backup",
             displayName: "Backup",
             index: 9,
             groupName: "Account",
-            editor: "Switch"
+            editor: "Picker",
+            valuesProvider: ["Yes", "No"]
           },
           {
             name: "market",
@@ -166,7 +182,6 @@ export default {
             groupName: "Account",
             index: 11,
             valuesProvider: [
-              "All",
               "A",
               "C",
               "D",
@@ -196,14 +211,14 @@ export default {
           },
           {
             name: "office_address2",
-            displayName: "",
+            displayName: "2",
             index: 14,
             groupName: "Office Address",
             editor: "Text"
           },
           {
             name: "office_address3",
-            displayName: "",
+            displayName: "3",
             index: 15,
             groupName: "Office Address",
             editor: "Text"
@@ -217,14 +232,14 @@ export default {
           },
           {
             name: "residence_address2",
-            displayName: "",
+            displayName: "2",
             index: 17,
             groupName: "Residence Address",
             editor: "Text"
           },
           {
             name: "residence_address3",
-            displayName: "",
+            displayName: "3",
             index: 18,
             groupName: "Residence Address",
             editor: "Text"
@@ -237,7 +252,68 @@ export default {
     this.getData(this.customer_id);
   },
   methods: {
-    submit() {},
+    save() {
+      this.$refs.dataform.validateAll().then(result => {
+        if (result == false) {
+          feedback.warning({
+            title: "Warning",
+            message: "Incomeplete Data could not saved"
+          });
+          console.log("form submit failed");
+        } else {
+          this.isLoading = true;
+          this.submitData();
+        }
+      });
+    },
+    submitData() {
+      let data = {
+        id: this.customerForm.id,
+        general_ledger_id: this.customerForm.general_ledger_id,
+        customer_name1: this.customerForm.customer_name1,
+        customer_name2: this.customerForm.customer_name2,
+        owner_name: this.customerForm.owner_name,
+        contact_person: this.customerForm.contact_person,
+        contact_no1: this.customerForm.contact_no1,
+        contact_no2: this.customerForm.contact_no2,
+        email: this.customerForm.email,
+        no_of_company: this.customerForm.no_of_company,
+        sms: getByValues(yesnoList, this.customerForm.sms.toString()),
+        backup: getByValues(yesnoList, this.customerForm.backup.toString()),
+        mobile: this.customerForm.mobile,
+        market: getByValues(marketList, this.customerForm.market.toString()),
+        wing: this.customerForm.wing,
+        gala_no: this.customerForm.gala_no,
+        office_address1: this.customerForm.office_address1,
+        office_address2: this.customerForm.office_address2,
+        office_address3: this.customerForm.office_address3,
+        residence_address1: this.customerForm.residence_address1,
+        residence_address2: this.customerForm.residence_address2,
+        residence_address3: this.customerForm.residence_address3
+      };
+      console.log("inside submit data", data);
+
+      axios
+        .post(
+          `https://express-mysql-passport-jwt-api.herokuapp.com/mobile/customer/${data.id}`,
+          data
+        )
+        .then(response => {
+          this.isLoading = false;
+          //console.log(response);
+          if (response.data.changedRows == 1) {
+            feedback.success({
+              title: "successful",
+              message: "Data saved.!"
+            });
+          } else {
+            feedback.error({
+              title: "Error",
+              message: "Incomeplete Data could not saved"
+            });
+          }
+        });
+    },
     call() {
       permissions
         .requestPermission(
@@ -246,7 +322,7 @@ export default {
         )
         .then(() => {
           console.log("Woo Hoo, I have the power!");
-          phone.dial("9324360777", false).then(
+          phone.dial(this.customerForm.contact_no1, false).then(
             args => {
               console.log("call response", args);
             },
@@ -260,10 +336,22 @@ export default {
         });
     },
     sms() {
-      phone.sms("9324360777", "My test messageMessage").then(function(args) {
-        /// args.reponse: "success", "cancelled", "failed"
-        console.log("SMS response", args);
-      });
+      // let currentDate = new Date();
+      // let timestamp =
+      //   currentDate.getFullYear() +
+      //   "-" +
+      //   currentDate.getUTCMonth +
+      //   "-" +
+      //   currentDate.getDay;
+      // console.log(new Date().getFullYear());
+      console.log(format(this.due, "YYYY-MM-Do"));
+
+      phone
+        .sms(this.customerForm.contact_no1, "My test messageMessage")
+        .then(function(args) {
+          /// args.reponse: "success", "cancelled", "failed"
+          console.log("SMS response", args);
+        });
     },
     onGroupUpdate(args) {
       let nativeGroup = args.group;
@@ -281,7 +369,7 @@ export default {
         )
         .then(response => {
           let data = response.data;
-          //console.log("get data", data);
+
           this.customerForm = {
             id: data.id,
             general_ledger_id: data.general_ledger_id,
@@ -293,10 +381,10 @@ export default {
             contact_no2: data.contact_no2,
             email: data.email,
             no_of_company: data.no_of_company,
-            sms: data.sms,
-            backup: data.backup,
+            sms: getByKeys(yesnoList, response.data.sms.toString()),
+            backup: getByKeys(yesnoList, response.data.backup.toString()),
             mobile: data.mobile,
-            market: data.market,
+            market: getByKeys(marketList, response.data.market.toString()),
             wing: data.wing,
             gala_no: data.gala_no,
             office_address1: data.office_address1,
@@ -306,6 +394,7 @@ export default {
             residence_address2: data.residence_address2,
             residence_address3: data.residence_address3
           };
+          //console.log("data fetch", this.customerForm);
         });
     }
   }

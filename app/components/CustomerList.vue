@@ -18,16 +18,30 @@
         @pullToRefreshInitiated="onPullToRefreshInitiated"
       >
         <v-template>
-          <GridLayout class="item" columns="2,50,*,15,2" rows="50">
-            <Image v-if="item.market === 'Veg'" src="~/assets/images/fruits-icon.png" col="1" />
+          <GridLayout class="item" columns="2,50,*,15,2" rows="50,40">
+            <Image
+              v-if="item.market === 'Veg'"
+              src="~/assets/images/fruits-icon.png"
+              col="1"
+              row="0"
+            />
             <Image
               v-else-if="item.market === 'Fruit'"
               src="~/assets/images/Cabbage-icon.png"
+              row="0"
               col="1"
             />
-            <Image v-else src="~/assets/images/business-icon.png" col="1" />
-            <Label :text="item.name" class="ItemText" col="2"></Label>
-            <Label :text="item.gala_no" class="ItemExtra" col="2"></Label>
+            <Image v-else src="~/assets/images/business-icon.png" row="0" col="1" />
+            <Label :text="item.name" class="ItemText" row="0" col="2"></Label>
+            <Label :text="item.gala_no" class="ItemExtra" row="0" col="2"></Label>
+
+            <Label
+              text="this is what I am trying"
+              textWrap="true"
+              row="1"
+              col="1"
+              colSpan="3"
+            />
           </GridLayout>
         </v-template>
       </RadListView>
@@ -61,6 +75,8 @@ export default {
     return {
       items: [],
       dialogOpen: false,
+      id_old: 0,
+      isExpand: false,
       customerForm: {
         customerName: "",
         galaNo: "",
@@ -131,14 +147,27 @@ export default {
       this.dialogOpen = false;
     },
     onPullToRefreshInitiated({ object }) {
+      let data = {
+        customerName: this.customerForm.customerName,
+        galaNo: this.customerForm.galaNo,
+        apmc: this.customerForm.apmc,
+        wing: this.customerForm.wing
+      };
       axios
         .post(
           "https://express-mysql-passport-jwt-api.herokuapp.com/mobile/customerSearch",
-          this.customerForm
+          data
         )
         .then(response => {
+          if (this.$store.state.verbose) {
+            console.log("getData()", response.data);
+          }
           this.items = new ObservableArray(response.data);
           object.notifyPullToRefreshFinished();
+        })
+        .catch(error => {
+          console.log(data);
+          console.log("onPullRefreshInitiatederror", error);
         });
     },
     getData() {
@@ -148,16 +177,21 @@ export default {
           "https://express-mysql-passport-jwt-api.herokuapp.com/mobile/customer"
         )
         .then(response => {
-          console.log("respose");
-          //console.log(response.data);
+          if (this.$store.state.verbose) {
+            console.log("getData()", response.data);
+          }
           this.items = response.data;
           this.processing = false;
+        })
+        .catch(err => {
+          console.log("getData() error", err);
         });
     },
     onItemClick({ item }) {
       let customer_id = item.id;
-      //console.log("Tapped on ", customer_id);
-      this.$navigateTo(CustomerDetail, { props: { customer_id } });
+      this.isExpand = true;
+      console.log("Tapped on ", customer_id, this.isExpand);
+      //this.$navigateTo(CustomerDetail, { props: { customer_id } });
     }
   }
 };

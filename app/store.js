@@ -8,7 +8,8 @@ export default new Vuex.Store({
   state: {
     customer_id: "",
     language: "English",
-    rmn: 0 /*,
+    rmn: 0,
+    verbose: false /*,
     trade: "",
     companyCount: 0,
     coName1: "",
@@ -16,6 +17,11 @@ export default new Vuex.Store({
     coName3: "",
     coName4: ""
     */
+  },
+  getters: {
+    getVerbose(state) {
+      return state.verbose;
+    }
   },
   mutations: {
     load(state) {
@@ -39,6 +45,10 @@ export default new Vuex.Store({
       state.coName3 = data.coName3;
       state.coName4 = data.coName4;
       */
+    },
+    setVerbose(state, data) {
+      console.log("inside mutation", data);
+      state.verbose = data;
     }
   },
   actions: {}

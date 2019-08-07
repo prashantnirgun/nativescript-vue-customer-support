@@ -6,9 +6,9 @@
         <Label text="Buy" padding="10" backgroundColor="lightgray" />
         <Label class="drawer-item" text="SMS" />
         <Label class="drawer-item" text="Software" />
-        <Label class="drawer-item" text="Hardware" />
+        <Label class="drawer-item" text="Location" @tap="goTo('location')" />
         <Label text="Support" padding="10" backgroundColor="lightgray" />
-        <Label class="drawer-item" text="Hardware" @tap="goTo('counter')" />
+        <Label class="drawer-item" text="Hardware" @tap="goTo('test')" />
         <Label class="drawer-item" text="Profile" @tap="goTo('profile')" />
         <Label text="Misc" padding="10" backgroundColor="lightgray" />
         <Label class="drawer-item" text="Customer List" @tap="goTo('customer')" />
@@ -42,7 +42,8 @@ import Plugin from "./Plugin";
 import About from "./About";
 import ProfileDisplay from "./profile/ProfileDisplay";
 import Counter from "./Counter";
-
+import Test from "./Test";
+import Location from "./Location";
 export default {
   data() {
     return {
@@ -63,6 +64,12 @@ export default {
           break;
         case "counter":
           this.$navigateTo(Counter);
+          break;
+        case "test":
+          this.$navigateTo(Test);
+          break;
+        case "location":
+          this.$navigateTo(Location);
           break;
         default:
           this.$navigateTo(About);

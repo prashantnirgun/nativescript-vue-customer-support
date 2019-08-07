@@ -26,18 +26,7 @@
               color="blue"
               @tap="call"
             />
-            <Button class="fa take-picture-icon">{{'fa-search' | fonticon}} Search</Button>
-          </StackLayout>
-          <StackLayout orientation="horizontal">
-            <Label
-              :text="'fa-comment' | fonticon"
-              class="fa"
-              color="green"
-              style="border-radius: 10px; border: 3px solid #BADA55;"
-              ;
-            />
-            <Label :text="'fa-phone-volume' | fonticon" class="fa" color="blue" @tap="call" />
-            <Label class="fa">{{'fa-search' | fonticon}} Search</Label>
+            <Button class="fa take-picture-icon" @tap="setVerbose">{{'fa-search' | fonticon}} Search</Button>
           </StackLayout>
         </stack-layout>
       </card-view>
@@ -51,6 +40,11 @@ import * as phone from "nativescript-phone";
 
 export default {
   methods: {
+    setVerbose() {
+      console.log("store output");
+      this.$store.commit("setVerbose", true);
+      console.log(this.$store.state.verbose);
+    },
     call() {
       permissions
         .requestPermission(
