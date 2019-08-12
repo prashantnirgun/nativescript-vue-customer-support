@@ -27,7 +27,7 @@
 import axios from "axios/dist/axios";
 import * as permissions from "nativescript-permissions";
 import * as phone from "nativescript-phone";
-import { getByKeys, getByValues } from "../helper";
+import { getByKeys, getByValues } from "../../helper";
 import { constants } from "fs";
 const yesnoList = { Y: "Yes", N: "No" };
 const marketList = { V: "Veg", F: "Fruit", O: "Onion", R: "Retail" };

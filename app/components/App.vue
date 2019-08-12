@@ -3,17 +3,17 @@
     <RadSideDrawer ref="drawer">
       <StackLayout ~drawerContent backgroundColor="#ffffff">
         <Label class="drawer-header" text="TSS" />
-        <Label text="Buy" padding="10" backgroundColor="lightgray" />
         <Label class="drawer-item" text="SMS" />
         <Label class="drawer-item" text="Software" />
-        <Label class="drawer-item" text="Location" @tap="goTo('location')" />
+        <Label class="drawer-item" text="Attendance" @tap="goTo('attendance')" />
         <Label text="Support" padding="10" backgroundColor="lightgray" />
-        <Label class="drawer-item" text="Hardware" @tap="goTo('test')" />
+        <Label class="drawer-item" text="Ticketing" @tap="goTo('ticketing')" />
         <Label class="drawer-item" text="Profile" @tap="goTo('profile')" />
         <Label text="Misc" padding="10" backgroundColor="lightgray" />
         <Label class="drawer-item" text="Customer List" @tap="goTo('customer')" />
         <Label class="drawer-item" text="Call Logs" @tap="goTo('plugin')" />
         <Label class="drawer-item" text="About" @tap="goTo('about')" />
+        <Label class="drawer-item" text="Exit" @tap="logout" />
       </StackLayout>
 
       <GridLayout ~mainContent columns="*" rows="*">
@@ -37,13 +37,16 @@
 </template>
 
 <script >
-import CustomerList from "./CustomerList";
+import CustomerList from "./customer/CustomerList";
 import Plugin from "./Plugin";
 import About from "./About";
 import ProfileDisplay from "./profile/ProfileDisplay";
 import Counter from "./Counter";
 import Test from "./Test";
-import Location from "./Location";
+import Attendance from "./attendance/Attendance";
+import Ticketing from "./ticket/Index";
+import { exit } from "nativescript-exit";
+
 export default {
   data() {
     return {
@@ -51,13 +54,16 @@ export default {
     };
   },
   methods: {
+    logout() {
+      exit();
+    },
     goTo(page) {
       switch (page) {
         case "customer":
           this.$navigateTo(CustomerList);
           break;
-        case "plugin":
-          this.$navigateTo(Plugin);
+        case "ticketing":
+          this.$navigateTo(Ticketing);
           break;
         case "profile":
           this.$navigateTo(ProfileDisplay);
@@ -68,8 +74,8 @@ export default {
         case "test":
           this.$navigateTo(Test);
           break;
-        case "location":
-          this.$navigateTo(Location);
+        case "attendance":
+          this.$navigateTo(Attendance);
           break;
         default:
           this.$navigateTo(About);

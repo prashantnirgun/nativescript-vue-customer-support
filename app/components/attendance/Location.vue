@@ -1,21 +1,17 @@
 <template>
-  <Page class="page">
-    <ActionBar title="Attendance" />
-
-    <StackLayout class="home-panel">
-      <Button class="btn btn-primary fa" @tap="getLocation">{{'fa-map-marker' | fonticon}} Location</Button>
-      <RadDataForm :source="customerForm" :metadata="customerFormMetadata" />
-      <Button class="btn btn-primary fa" @tap="submitData">{{'fa-upload' | fonticon}} Submit</Button>
-      <ActivityIndicator
-        row="0"
-        width="100"
-        height="100"
-        borderRadius="50"
-        :busy="isLoading"
-        :visibility="isLoading? 'visible' : 'collapsed'"
-      />
-    </StackLayout>
-  </Page>
+  <StackLayout>
+    <!-- <Button class="btn btn-primary fa" @tap="getLocation">{{'fa-map-marker' | fonticon}} Location</Button> -->
+    <RadDataForm :source="customerForm" :metadata="customerFormMetadata" marginTop="20" />
+    <Button class="btn btn-primary fa" @tap="submitData">{{'fa-upload' | fonticon}} Submit</Button>
+    <ActivityIndicator
+      row="0"
+      width="100"
+      height="100"
+      borderRadius="50"
+      :busy="isLoading"
+      :visibility="isLoading? 'visible' : 'collapsed'"
+    />
+  </StackLayout>
 </template>
 
 <script>
@@ -23,10 +19,14 @@ const geolocation = require("nativescript-geolocation");
 const { Accuracy } = require("tns-core-modules/ui/enums");
 import format from "date-fns/format";
 import axios from "axios/dist/axios";
-import { getByKeys, getByValues } from "../helper";
+import { getByValues } from "../../helper";
 var FeedbackPlugin = require("nativescript-feedback");
 var feedback = new FeedbackPlugin.Feedback();
-const employeeList = { 1: "Prashant Nirgun", 2: "Amol Tajane" };
+const employeeList = {
+  1: "Prashant Nirgun",
+  2: "Amol Tajane",
+  3: "Santosh Bochare"
+};
 
 export default {
   data() {
@@ -41,7 +41,7 @@ export default {
         latitude: "",
         longitude: "",
         day_status: "Absent",
-        method: "In"
+        method: ""
       },
       customerFormMetadata: {
         isReadOnly: false,
@@ -53,7 +53,11 @@ export default {
             displayName: "Person",
             index: 0,
             editor: "Picker",
-            valuesProvider: ["Amol Tajane", "Prashant Nirgun"]
+            valuesProvider: [
+              "Amol Tajane",
+              "Prashant Nirgun",
+              "Santosh Bochare"
+            ]
           },
           {
             name: "attendance_date",
@@ -105,21 +109,25 @@ export default {
 
       console.log("employee", this.customerForm.method);
       let id = getByValues(employeeList, this.customerForm.employeeName);
-      console.log("employee", id);
 
+      console.log("employee", id);
+      console.log(
+        "date-format",
+        format(Date(this.customerForm.attendance_date), "YYYY-MM-DD")
+      );
       let data = {
         employee_id: getByValues(employeeList, this.customerForm.employeeName),
         attendance_date: format(
-          this.customerForm.attendance_date,
+          Date(this.customerForm.attendance_date),
           "YYYY-MM-DD"
         ),
         time: this.customerForm.time,
         latitude: this.customerForm.latitude,
         longitude: this.customerForm.longitude,
         day_status: this.customerForm.day_status.toString().substring(0, 1),
-        method: this.customerForm.method.toString().substring(0, 1)
+        method: this.customerForm.method.substring(0, 1)
       };
-      console.log(data);
+      console.log("data going to submit", data);
 
       axios
         .post(
@@ -128,13 +136,22 @@ export default {
         )
         .then(response => {
           this.isLoading = false;
-          feedback.success({
-            title: "successful",
-            message: "Sign In Successful.!"
-          });
+          //console.log(response);
+          if (response.data.status == "success") {
+            feedback.success({
+              title: "successful",
+              message: "Sign In Successful.!"
+            });
+          } else {
+            feedback.warning({
+              title: "Error",
+              message: response.data.message
+            });
+          }
         })
         .catch(error => {
           this.isLoading = false;
+          console.log("error catched", error);
           feedback.error({
             title: "Error",
             message: "Incomeplete Data could not saved"

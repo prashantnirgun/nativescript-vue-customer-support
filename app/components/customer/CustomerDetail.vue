@@ -18,8 +18,8 @@
 
 <script>
 import CustomerEdit from "./CustomerEdit";
-import CompanyEdit from "./CompanyEdit";
-import CompanyList from "./CompanyList";
+import CompanyEdit from "./company/CompanyEdit";
+import CompanyList from "./company/CompanyList";
 
 export default {
   components: {
